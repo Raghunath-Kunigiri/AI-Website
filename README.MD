@@ -44,7 +44,7 @@ python main.py
 
 
 Run the Frontend:
-npx http-server .
+npx http-server public
 
 
 Access the Application:
