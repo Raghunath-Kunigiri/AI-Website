@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sources Hub | Admin Panel</title>
+    <link rel="stylesheet" href="dist/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-robot text-3xl"></i>
+                    <h1 class="text-2xl font-bold">AI Sources Hub - Admin Panel</h1>
+                </div>
+                <div>
+                    <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition font-medium hidden">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Login Section -->
+        <section id="loginSection" class="bg-white rounded-xl shadow-sm p-8 max-w-md mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Admin Login</h2>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                <div id="loginError" class="text-red-500 text-sm hidden">Invalid username or password.</div>
+                <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition font-medium">
+                    Login
+                </button>
+            </form>
+        </section>
+
+        <!-- Source Insertion Section (Hidden by Default) -->
+        <section id="sourceSection" class="bg-white rounded-xl shadow-sm p-8 max-w-2xl mx-auto hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Add New AI Source</h2>
+            <form id="sourceForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="sourceName" class="block text-sm font-medium text-gray-700 mb-1">Name*</label>
+                        <input type="text" id="sourceName" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="sourceCategory" class="block text-sm font-medium text-gray-700 mb-1">Category*</label>
+                        <select id="sourceCategory" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="">Select a category</option>
+                            <option value="Text Generation">Text Generation</option>
+                            <option value="Image Generation">Image Generation</option>
+                            <option value="Code Assistance">Code Assistance</option>
+                            <option value="Voice Synthesis">Voice Synthesis</option>
+                            <option value="Video Generation">Video Generation</option>
+                            <option value="Research">Research</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label for="sourceUrl" class="block text-sm font-medium text-gray-700 mb-1">URL*</label>
+                    <input type="url" id="sourceUrl" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                <div>
+                    <label for="sourceDescription" class="block text-sm font-medium text-gray-700 mb-1">Description*</label>
+                    <textarea id="sourceDescription" rows="3" required
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                </div>
+                <div>
+                    <label for="sourceTags" class="block text-sm font-medium text-gray-700 mb-1">Tags (comma separated)</label>
+                    <input type="text" id="sourceTags"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="sourceFeatured" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                    <label for="sourceFeatured" class="ml-2 block text-sm text-gray-700">Featured Source</label>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="clearForm" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Clear
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium">
+                        Add Source
+                    </button>
+                </div>
+            </form>
+            <div id="successMessage" class="text-green-600 text-sm mt-4 hidden">Source added successfully!</div>
+            <div id="errorMessage" class="text-red-500 text-sm mt-4 hidden">Failed to add source.</div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p>© 2025 AI Sources Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const loginSection = document.getElementById('loginSection');
+        const sourceSection = document.getElementById('sourceSection');
+        const loginForm = document.getElementById('loginForm');
+        const sourceForm = document.getElementById('sourceForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginError = document.getElementById('loginError');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const clearForm = document.getElementById('clearForm');
+
+        // State
+        let isAdmin = false;
+        const API_URL = 'http://localhost:8000/api';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if already logged in
+            if (localStorage.getItem('aiAdminLoggedIn') === 'true') {
+                isAdmin = true;
+                loginSection.classList.add('hidden');
+                sourceSection.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+            }
+        });
+
+        // Login Form Submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Updated authentication credentials
+            if (username === 'admin' && password === 'admin') {
+                isAdmin = true;
+                localStorage.setItem('aiAdminLoggedIn', 'true');
+                loginSection.classList.add('hidden');
+                sourceSection.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                loginForm.reset();
+                loginError.classList.add('hidden');
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // Source Form Submission
+        sourceForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const sourceData = {
+                name: document.getElementById('sourceName').value,
+                category: document.getElementById('sourceCategory').value,
+                url: document.getElementById('sourceUrl').value,
+                description: document.getElementById('sourceDescription').value,
+                tags: document.getElementById('sourceTags').value,
+                featured: document.getElementById('sourceFeatured').checked
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/sources`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sourceData)
+                });
+
+                if (!response.ok) throw new Error('Failed to create source');
+
+                sourceForm.reset();
+                document.getElementById('sourceFeatured').checked = false;
+                successMessage.classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+
+                // Hide success message after 3 seconds
+                setTimeout(() => successMessage.classList.add('hidden'), 3000);
+            } catch (error) {
+                errorMessage.textContent = `Error: ${error.message}`;
+                errorMessage.classList.remove('hidden');
+                successMessage.classList.add('hidden');
+            }
+        });
+
+        // Clear Form
+        clearForm.addEventListener('click', () => {
+            sourceForm.reset();
+            document.getElementById('sourceFeatured').checked = false;
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            isAdmin = false;
+            localStorage.removeItem('aiAdminLoggedIn');
+            loginSection.classList.remove('hidden');
+            sourceSection.classList.add('hidden');
+            logoutBtn.classList.add('hidden');
+            loginForm.reset();
+            loginError.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
