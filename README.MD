@@ -25,12 +25,6 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
 
 
-
-
-Populate Sample Data:
-python insert_sources.py
-
-
 Install Node.js Dependencies:
 npm install
 

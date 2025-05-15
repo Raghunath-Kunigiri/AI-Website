@@ -13,8 +13,10 @@
         <div class="container mx-auto px-4 py-6">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <i class="fas fa-robot text-3xl"></i>
-                    <h1 class="text-2xl font-bold">AI Sources Hub - Admin Panel</h1>
+                    <a href="Index.html" class="flex items-center space-x-2 hover:text-gray-200 transition">
+                        <i class="fas fa-robot text-3xl"></i>
+                        <h1 class="text-2xl font-bold">AI Sources Hub - Admin </h1>
+                    </a>
                 </div>
                 <div>
                     <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition font-medium hidden">
@@ -48,61 +50,73 @@
             </form>
         </section>
 
-        <!-- Source Insertion Section (Hidden by Default) -->
-        <section id="sourceSection" class="bg-white rounded-xl shadow-sm p-8 max-w-2xl mx-auto hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Add New AI Source</h2>
-            <form id="sourceForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Source Management Section (Hidden by Default) -->
+        <section id="sourceSection" class="hidden">
+            <!-- Add Source Form -->
+            <div class="bg-white rounded-xl shadow-sm p-8 max-w-2xl mx-auto mb-8">
+                <h2 id="formTitle" class="text-2xl font-bold text-gray-800 mb-6 text-center">Add New AI Source</h2>
+                <form id="sourceForm" class="space-y-4">
+                    <input type="hidden" id="sourceId">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="sourceName" class="block text-sm font-medium text-gray-700 mb-1">Name*</label>
+                            <input type="text" id="sourceName" required
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="sourceCategory" class="block text-sm font-medium text-gray-700 mb-1">Category*</label>
+                            <select id="sourceCategory" required
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">Select a category</option>
+                                <option value="Text Generation">Text Generation</option>
+                                <option value="Image Generation">Image Generation</option>
+                                <option value="Code Assistance">Code Assistance</option>
+                                <option value="Voice Synthesis">Voice Synthesis</option>
+                                <option value="Video Generation">Video Generation</option>
+                                <option value="Research">Research</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
                     <div>
-                        <label for="sourceName" class="block text-sm font-medium text-gray-700 mb-1">Name*</label>
-                        <input type="text" id="sourceName" required
+                        <label for="sourceUrl" class="block text-sm font-medium text-gray-700 mb-1">URL*</label>
+                        <input type="url" id="sourceUrl" required
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                     </div>
                     <div>
-                        <label for="sourceCategory" class="block text-sm font-medium text-gray-700 mb-1">Category*</label>
-                        <select id="sourceCategory" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                            <option value="">Select a category</option>
-                            <option value="Text Generation">Text Generation</option>
-                            <option value="Image Generation">Image Generation</option>
-                            <option value="Code Assistance">Code Assistance</option>
-                            <option value="Voice Synthesis">Voice Synthesis</option>
-                            <option value="Video Generation">Video Generation</option>
-                            <option value="Research">Research</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <label for="sourceDescription" class="block text-sm font-medium text-gray-700 mb-1">Description*</label>
+                        <textarea id="sourceDescription" rows="3" required
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                    </div>
+                    <div>
+                        <label for="sourceTags" class="block text-sm font-medium text-gray-700 mb-1">Tags (comma separated)</label>
+                        <input type="text" id="sourceTags"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="sourceFeatured" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <label for="sourceFeatured" class="ml-2 block text-sm text-gray-700">Featured Source</label>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelEdit" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition hidden">Cancel</button>
+                        <button type="button" id="clearForm" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Clear</button>
+                        <button type="submit" id="submitBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium">Add Source</button>
+                    </div>
+                </form>
+                <div id="successMessage" class="text-green-600 text-sm mt-4 hidden"></div>
+                <div id="errorMessage" class="text-red-500 text-sm mt-4 hidden"></div>
+            </div>
+
+            <!-- Source List -->
+            <div class="bg-white rounded-xl shadow-sm p-8 max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Sources</h2>
+                <div id="sourceList" class="grid grid-cols-1 gap-4">
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                        <p>Loading sources...</p>
                     </div>
                 </div>
-                <div>
-                    <label for="sourceUrl" class="block text-sm font-medium text-gray-700 mb-1">URL*</label>
-                    <input type="url" id="sourceUrl" required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                </div>
-                <div>
-                    <label for="sourceDescription" class="block text-sm font-medium text-gray-700 mb-1">Description*</label>
-                    <textarea id="sourceDescription" rows="3" required
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
-                </div>
-                <div>
-                    <label for="sourceTags" class="block text-sm font-medium text-gray-700 mb-1">Tags (comma separated)</label>
-                    <input type="text" id="sourceTags"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" id="sourceFeatured" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-                    <label for="sourceFeatured" class="ml-2 block text-sm text-gray-700">Featured Source</label>
-                </div>
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" id="clearForm" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                        Clear
-                    </button>
-                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium">
-                        Add Source
-                    </button>
-                </div>
-            </form>
-            <div id="successMessage" class="text-green-600 text-sm mt-4 hidden">Source added successfully!</div>
-            <div id="errorMessage" class="text-red-500 text-sm mt-4 hidden">Failed to add source.</div>
+            </div>
         </section>
     </main>
 
@@ -126,19 +140,32 @@
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
         const clearForm = document.getElementById('clearForm');
+        const cancelEdit = document.getElementById('cancelEdit');
+        const submitBtn = document.getElementById('submitBtn');
+        const formTitle = document.getElementById('formTitle');
+        const sourceList = document.getElementById('sourceList');
 
         // State
         let isAdmin = false;
-        const API_URL = 'http://localhost:8000/api';
+        let editingSourceId = null;
+
+        // Simulated Database
+        const defaultSources = [
+            { id: 1, name: "Grok 3", category: "Text Generation", url: "https://x.ai/grok", description: "AI assistant by xAI for answering queries.", tags: "chatbot, assistant", featured: true },
+            { id: 2, name: "ChatGPT", category: "Text Generation", url: "https://openai.com", description: "Conversational AI by OpenAI.", tags: "chatbot, nlp", featured: false },
+        ];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if already logged in
             if (localStorage.getItem('aiAdminLoggedIn') === 'true') {
                 isAdmin = true;
                 loginSection.classList.add('hidden');
                 sourceSection.classList.remove('hidden');
                 logoutBtn.classList.remove('hidden');
+                renderSources();
+            }
+            if (!localStorage.getItem('aiSources')) {
+                localStorage.setItem('aiSources', JSON.stringify(defaultSources));
             }
         });
 
@@ -148,7 +175,6 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Updated authentication credentials
             if (username === 'admin' && password === 'admin') {
                 isAdmin = true;
                 localStorage.setItem('aiAdminLoggedIn', 'true');
@@ -157,16 +183,18 @@
                 logoutBtn.classList.remove('hidden');
                 loginForm.reset();
                 loginError.classList.add('hidden');
+                renderSources();
             } else {
                 loginError.classList.remove('hidden');
             }
         });
 
         // Source Form Submission
-        sourceForm.addEventListener('submit', async (e) => {
+        sourceForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
             const sourceData = {
+                id: editingSourceId || Date.now(),
                 name: document.getElementById('sourceName').value,
                 category: document.getElementById('sourceCategory').value,
                 url: document.getElementById('sourceUrl').value,
@@ -175,33 +203,52 @@
                 featured: document.getElementById('sourceFeatured').checked
             };
 
-            try {
-                const response = await fetch(`${API_URL}/sources`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(sourceData)
-                });
-
-                if (!response.ok) throw new Error('Failed to create source');
-
-                sourceForm.reset();
-                document.getElementById('sourceFeatured').checked = false;
-                successMessage.classList.remove('hidden');
-                errorMessage.classList.add('hidden');
-
-                // Hide success message after 3 seconds
-                setTimeout(() => successMessage.classList.add('hidden'), 3000);
-            } catch (error) {
-                errorMessage.textContent = `Error: ${error.message}`;
-                errorMessage.classList.remove('hidden');
-                successMessage.classList.add('hidden');
+            const sources = getSources();
+            if (editingSourceId) {
+                const index = sources.findIndex(s => s.id === editingSourceId);
+                sources[index] = sourceData;
+                successMessage.textContent = 'Source updated successfully!';
+            } else {
+                sources.push(sourceData);
+                successMessage.textContent = 'Source added successfully!';
             }
+
+            saveSources(sources);
+            sourceForm.reset();
+            document.getElementById('sourceFeatured').checked = false;
+            successMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            editingSourceId = null;
+            formTitle.textContent = 'Add New AI Source';
+            submitBtn.textContent = 'Add Source';
+            cancelEdit.classList.add('hidden');
+            renderSources();
+
+            setTimeout(() => successMessage.classList.add('hidden'), 3000);
         });
 
         // Clear Form
         clearForm.addEventListener('click', () => {
             sourceForm.reset();
             document.getElementById('sourceFeatured').checked = false;
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            if (editingSourceId) {
+                editingSourceId = null;
+                formTitle.textContent = 'Add New AI Source';
+                submitBtn.textContent = 'Add Source';
+                cancelEdit.classList.add('hidden');
+            }
+        });
+
+        // Cancel Edit
+        cancelEdit.addEventListener('click', () => {
+            sourceForm.reset();
+            document.getElementById('sourceFeatured').checked = false;
+            editingSourceId = null;
+            formTitle.textContent = 'Add New AI Source';
+            submitBtn.textContent = 'Add Source';
+            cancelEdit.classList.add('hidden');
             successMessage.classList.add('hidden');
             errorMessage.classList.add('hidden');
         });
@@ -216,6 +263,96 @@
             loginForm.reset();
             loginError.classList.add('hidden');
         });
+
+        // Functions
+        function getSources() {
+            return JSON.parse(localStorage.getItem('aiSources')) || [];
+        }
+
+        function saveSources(sources) {
+            localStorage.setItem('aiSources', JSON.stringify(sources));
+        }
+
+        function renderSources() {
+            const sources = getSources();
+            if (sources.length === 0) {
+                sourceList.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-search text-4xl mb-4"></i>
+                        <p>No sources found.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            sourceList.innerHTML = sources.map(source => {
+                const tagArray = source.tags ? source.tags.split(',').map(tag => tag.trim()) : [];
+                const tagsHtml = tagArray.map(tag => `<span class="inline-block px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">${tag}</span>`).join('');
+                return `
+                    <div class="bg-gray-50 rounded-lg p-4 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">${source.name}</h3>
+                            <p class="text-gray-600">${source.description}</p>
+                            <div class="flex flex-wrap gap-2 mt-2">${tagsHtml}</div>
+                            <p class="text-primary mt-2"><a href="${source.url}" target="_blank">${source.url}</a></p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="edit-btn p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition" data-id="${source.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition" data-id="${source.id}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const sourceId = parseInt(e.currentTarget.getAttribute('data-id'));
+                    editSource(sourceId);
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const sourceId = parseInt(e.currentTarget.getAttribute('data-id'));
+                    deleteSource(sourceId);
+                });
+            });
+        }
+
+        function editSource(sourceId) {
+            const sources = getSources();
+            const source = sources.find(s => s.id === sourceId);
+            if (!source) return;
+
+            document.getElementById('sourceId').value = source.id;
+            document.getElementById('sourceName').value = source.name;
+            document.getElementById('sourceCategory').value = source.category;
+            document.getElementById('sourceUrl').value = source.url;
+            document.getElementById('sourceDescription').value = source.description;
+            document.getElementById('sourceTags').value = source.tags;
+            document.getElementById('sourceFeatured').checked = source.featured;
+
+            editingSourceId = sourceId;
+            formTitle.textContent = 'Edit AI Source';
+            submitBtn.textContent = 'Update Source';
+            cancelEdit.classList.remove('hidden');
+        }
+
+        function deleteSource(sourceId) {
+            if (confirm('Are you sure you want to delete this source?')) {
+                const sources = getSources();
+                const updatedSources = sources.filter(s => s.id !== sourceId);
+                saveSources(updatedSources);
+                renderSources();
+                successMessage.textContent = 'Source deleted successfully!';
+                successMessage.classList.remove('hidden');
+                setTimeout(() => successMessage.classList.add('hidden'), 3000);
+            }
+        }
     </script>
 </body>
 </html>
