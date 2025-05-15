@@ -20,9 +20,9 @@
                     <button id="searchBtn" class="p-2 rounded-full hover:bg-white/10 transition">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button id="loginBtn" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition font-medium">
-                        <i class="fas fa-user-shield mr-2"></i>Admin Login
-                    </button>
+                    <a href="user.html" class="inline-flex items-center px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition font-medium">
+                        <i class="fas fa-user mr-2"></i>User Login
+                    </a>
                 </div>
             </div>
         </div>
@@ -273,12 +273,12 @@
                     <p class="text-gray-400">The most comprehensive directory of AI tools and resources for developers and researchers.</p>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
                     <ul class="space-y-2">
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Home</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition">Categories</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Popular Sources</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition">Submit a Source</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Featured Tools</a></li>
+                        <li><a href="admin.html" class="text-gray-400 hover:text-white transition">Admin Login</a></li>
                     </ul>
                 </div>
                 <div>
@@ -395,25 +395,34 @@
             document.getElementById('loginError').classList.add('hidden');
         });
 
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Updated authentication credentials
-            if (username === 'admin' && password === 'admin') {
-                isAdmin = true;
-                localStorage.setItem('aiAdminLoggedIn', 'true');
-                adminControls.classList.remove('hidden');
-                loginBtn.innerHTML = '<i class="fas fa-sign-out-alt mr-2"></i>Logout';
-                loginModal.classList.add('hidden');
-                renderSources(); // Re-render to show admin controls
-                loginForm.reset();
-                document.getElementById('loginError').classList.add('hidden');
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
-            }
-        });
+        loginForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    // Simple admin authentication (in a real app, this would be server-side)
+    if (username === 'admin' && password === 'admin123') {
+        // Set admin status
+        isAdmin = true;
+        localStorage.setItem('aiAdminLoggedIn', 'true');
+        
+        // Show admin controls
+        adminControls.classList.remove('hidden');
+        
+        // Update login button to logout
+        loginBtn.innerHTML = '<i class="fas fa-sign-out-alt mr-2"></i>Logout';
+        
+        // Close the modal
+        loginModal.classList.add('hidden');
+        
+        // Refresh sources to show edit/delete buttons
+        renderSources();
+    } else {
+        // Show error message
+        document.getElementById('loginError').classList.remove('hidden');
+    }
+});
 
         addSourceBtn.addEventListener('click', () => {
             editingSourceId = null;
@@ -431,44 +440,65 @@
             sourceModal.classList.add('hidden');
         });
 
-        sourceForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const sourceData = {
-                name: document.getElementById('sourceName').value,
-                category: document.getElementById('sourceCategory').value,
-                url: document.getElementById('sourceUrl').value,
-                description: document.getElementById('sourceDescription').value,
-                tags: document.getElementById('sourceTags').value,
-                featured: document.getElementById('sourceFeatured').checked
-            };
-            
-            try {
-                if (editingSourceId) {
-                    // Update existing source
-                    const response = await fetch(`${API_URL}/sources/${editingSourceId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(sourceData)
-                    });
-                    if (!response.ok) throw new Error('Failed to update source');
-                } else {
-                    // Add new source
-                    const response = await fetch(`${API_URL}/sources`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(sourceData)
-                    });
-                    if (!response.ok) throw new Error('Failed to create source');
-                }
-                
-                sourceModal.classList.add('hidden');
-                renderSources();
-                updateStats();
-            } catch (error) {
-                alert(`Error: ${error.message}`);
-            }
-        });
+        sourceForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Get form values
+    const sourceData = {
+        name: document.getElementById('sourceName').value,
+        category: document.getElementById('sourceCategory').value,
+        url: document.getElementById('sourceUrl').value,
+        description: document.getElementById('sourceDescription').value,
+        tags: document.getElementById('sourceTags').value,
+        featured: document.getElementById('sourceFeatured').checked
+    };
+    
+    try {
+        let response;
+        
+        if (editingSourceId) {
+            // Update existing source
+            response = await fetch(`${API_URL}/sources/${editingSourceId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sourceData)
+            });
+        } else {
+            // Add new source
+            response = await fetch(`${API_URL}/sources`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sourceData)
+            });
+        }
+        
+        if (!response.ok) throw new Error('Failed to save source');
+        
+        // Reset form
+        sourceForm.reset();
+        
+        // Close modal
+        sourceModal.classList.add('hidden');
+        
+        // Reset editing flag
+        editingSourceId = null;
+        
+        // Refresh sources
+        renderSources();
+        updateStats();
+        
+        // Show success message
+        alert(`Source ${editingSourceId ? 'updated' : 'added'} successfully!`);
+    } catch (error) {
+        console.error('Error saving source:', error);
+        alert('Failed to save source. Please try again.');
+    }
+});
+
 
         categoryFilters.forEach(filter => {
             filter.addEventListener('click', () => {
@@ -490,148 +520,185 @@
 
         // Functions
         async function fetchSources() {
-            try {
-                const response = await fetch(`${API_URL}/sources`);
-                if (!response.ok) throw new Error('Failed to fetch sources');
-                return await response.json();
-            } catch (error) {
-                console.error('Error fetching sources:', error);
-                return [];
-            }
+    try {
+        const response = await fetch(`${API_URL}/sources`);
+        if (!response.ok) {
+            console.error('Server responded with status:', response.status);
+            throw new Error(`Failed to fetch sources: ${response.statusText}`);
         }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching sources:', error);
+        sourcesContainer.innerHTML = `
+            <div class="col-span-full text-center py-12 text-gray-500">
+                <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-500"></i>
+                <p>Failed to load AI sources. Please check your connection and try again.</p>
+                <p class="text-sm mt-2">Error: ${error.message}</p>
+            </div>
+        `;
+        return [];
+    }
+}
 
-        async function renderSources() {
+async function renderSources() {
+    try {
+        // Show loading state
+        sourcesContainer.innerHTML = `
+            <div class="col-span-full text-center py-12 text-gray-500">
+                <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                <p>Loading AI sources...</p>
+            </div>
+        `;
+        
+        // Fetch sources from API
+        const sources = await fetchSources();
+        
+        // Filter sources based on current filter and search
+        const filteredSources = sources.filter(source => {
+            const matchesCategory = currentFilter === 'all' || source.category === currentFilter;
+            const matchesSearch = currentSearch === '' || 
+                source.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                source.description.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                source.tags.toLowerCase().includes(currentSearch.toLowerCase());
+            return matchesCategory && matchesSearch;
+        });
+        
+        // If no sources found
+        if (filteredSources.length === 0) {
             sourcesContainer.innerHTML = `
-                <div class="text-center py-12 text-gray-500">
-                    <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
-                    <p>Loading AI sources...</p>
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <i class="fas fa-search text-4xl mb-4"></i>
+                    <p>No AI sources found matching your criteria.</p>
                 </div>
             `;
+            return;
+        }
+        
+        // Render sources
+        sourcesContainer.innerHTML = filteredSources.map(source => {
+            // Convert tags to array
+            const tagArray = source.tags ? source.tags.split(',').map(tag => tag.trim()) : [];
             
-            let sources = await fetchSources();
+            // Create tag HTML
+            const tagsHtml = tagArray.map(tag => 
+                `<span class="inline-block px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">${tag}</span>`
+            ).join('');
             
-            // Apply category filter
-            if (currentFilter !== 'all') {
-                sources = sources.filter(source => source.category === currentFilter);
-            }
+            // Admin controls HTML
+            const adminControlsHtml = isAdmin ? `
+                <div class="absolute bottom-4 right-4 flex space-x-2">
+                    <button class="edit-source-btn p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition" data-id="${source.id}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-source-btn p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition" data-id="${source.id}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            ` : '';
             
-            // Apply search filter
-            if (currentSearch) {
-                sources = sources.filter(source => 
-                    source.name.toLowerCase().includes(currentSearch) ||
-                    source.category.toLowerCase().includes(currentSearch) ||
-                    source.description.toLowerCase().includes(currentSearch) ||
-                    (source.tags && source.tags.toLowerCase().includes(currentSearch))
-                );
-            }
+            // Featured badge HTML
+            const featuredBadgeHtml = source.featured ? `<div class="featured-badge">Featured</div>` : '';
             
-            // Render sources
-            if (sources.length === 0) {
-                sourcesContainer.innerHTML = `
-                    <div class="col-span-full text-center py-12 text-gray-500">
-                        <i class="fas fa-search text-4xl mb-4"></i>
-                        <p>No AI sources found matching your criteria.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            sourcesContainer.innerHTML = sources.map(source => `
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover animate-fade-in relative" data-id="${source.id}">
-                    ${source.featured ? `
-                        <div class="featured-badge">
-                            <i class="fas fa-star mr-1"></i> Featured
-                        </div>
-                    ` : ''}
+            return `
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden relative card-hover transition">
+                    ${featuredBadgeHtml}
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-800">${source.name}</h3>
-                                <span class="inline-block mt-1 px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(source.category)}">
-                                    ${source.category}
-                                </span>
-                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800">${source.name}</h3>
+                            <span class="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary">${source.category}</span>
                         </div>
                         <p class="text-gray-600 mb-4">${source.description}</p>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            ${source.tags ? source.tags.split(',').map(tag => `
-                                <span class="inline-block px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">${tag.trim()}</span>
-                            `).join('') : ''}
+                            ${tagsHtml}
                         </div>
-                        <div class="flex items-center justify-between">
-                            <a href="${source.url}" target="_blank" class="text-primary hover:text-primary/80 font-medium">
-                                Visit Website <i class="fas fa-external-link-alt ml-1"></i>
-                            </a>
-                            ${isAdmin ? `
-                                <div class="flex space-x-2">
-                                    <button class="edit-source text-gray-500 hover:text-primary" data-id="${source.id}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="delete-source text-gray-500 hover:text-red-500" data-id="${source.id}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            ` : ''}
-                        </div>
+                        <a href="${source.url}" target="_blank" class="inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+                            <i class="fas fa-external-link-alt mr-2"></i>Visit
+                        </a>
                     </div>
+                    ${adminControlsHtml}
                 </div>
-            `).join('');
+            `;
+        }).join('');
+        
+        // Add event listeners to edit and delete buttons
+        if (isAdmin) {
+            document.querySelectorAll('.edit-source-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const sourceId = e.currentTarget.getAttribute('data-id');
+                    editSource(sourceId);
+                });
+            });
             
-            // Add event listeners for admin actions
-            if (isAdmin) {
-                document.querySelectorAll('.edit-source').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const sourceId = btn.dataset.id;
-                        editSource(sourceId);
-                    });
+            document.querySelectorAll('.delete-source-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const sourceId = e.currentTarget.getAttribute('data-id');
+                    deleteSource(sourceId);
                 });
-                
-                document.querySelectorAll('.delete-source').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const sourceId = btn.dataset.id;
-                        deleteSource(sourceId);
-                    });
-                });
-            }
+            });
         }
+    } catch (error) {
+        console.error('Error rendering sources:', error);
+        sourcesContainer.innerHTML = `
+            <div class="col-span-full text-center py-12 text-gray-500">
+                <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-500"></i>
+                <p>Failed to load AI sources. Please check your connection and try again.</p>
+            </div>
+        `;
+    }
+}
 
-        async function editSource(id) {
-            try {
-                const response = await fetch(`${API_URL}/sources/${id}`);
-                if (!response.ok) throw new Error('Failed to fetch source');
-                const source = await response.json();
-                
-                editingSourceId = id;
-                document.getElementById('modalTitle').textContent = 'Edit AI Source';
-                document.getElementById('sourceId').value = source.id;
-                document.getElementById('sourceName').value = source.name;
-                document.getElementById('sourceCategory').value = source.category;
-                document.getElementById('sourceUrl').value = source.url;
-                document.getElementById('sourceDescription').value = source.description;
-                document.getElementById('sourceTags').value = source.tags || '';
-                document.getElementById('sourceFeatured').checked = source.featured || false;
-                sourceModal.classList.remove('hidden');
-            } catch (error) {
-                alert(`Error: ${error.message}`);
-            }
-        }
+async function editSource(sourceId) {
+    try {
+        // Fetch the source data
+        const response = await fetch(`${API_URL}/sources/${sourceId}`);
+        if (!response.ok) throw new Error('Failed to fetch source');
+        const source = await response.json();
+        
+        // Set form values
+        document.getElementById('sourceId').value = source.id;
+        document.getElementById('sourceName').value = source.name;
+        document.getElementById('sourceCategory').value = source.category;
+        document.getElementById('sourceUrl').value = source.url;
+        document.getElementById('sourceDescription').value = source.description;
+        document.getElementById('sourceTags').value = source.tags;
+        document.getElementById('sourceFeatured').checked = source.featured;
+        
+        // Update modal title
+        document.getElementById('modalTitle').textContent = 'Edit AI Source';
+        
+        // Show the modal
+        sourceModal.classList.remove('hidden');
+        
+        // Set editing flag
+        editingSourceId = sourceId;
+    } catch (error) {
+        console.error('Error editing source:', error);
+        alert('Failed to load source data for editing.');
+    }
+}
 
-        async function deleteSource(id) {
-            if (confirm('Are you sure you want to delete this AI source?')) {
-                try {
-                    const response = await fetch(`${API_URL}/sources/${id}`, {
-                        method: 'DELETE'
-                    });
-                    if (!response.ok) throw new Error('Failed to delete source');
-                    renderSources();
-                    updateStats();
-                } catch (error) {
-                    alert(`Error: ${error.message}`);
-                }
-            }
+// Delete source function
+async function deleteSource(sourceId) {
+    if (confirm('Are you sure you want to delete this source? This action cannot be undone.')) {
+        try {
+            const response = await fetch(`${API_URL}/sources/${sourceId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) throw new Error('Failed to delete source');
+            
+            // Refresh sources
+            renderSources();
+            updateStats();
+            
+            // Show success message
+            alert('Source deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting source:', error);
+            alert('Failed to delete source. Please try again.');
         }
+    }
+}
 
         async function updateStats() {
             try {

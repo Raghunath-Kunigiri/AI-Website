@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sources Hub | User Login</title>
+    <link rel="stylesheet" href="output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-robot text-3xl"></i>
+                    <h1 class="text-2xl font-bold">AI Sources Hub</h1>
+                </div>
+                <div>
+                    <a href="index.html" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition font-medium">
+                        <i class="fas fa-home mr-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Login Section -->
+        <section class="bg-white rounded-xl shadow-sm p-8 max-w-md mx-auto animate-fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">User Login</h2>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" name="password" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" name="remember" class="mr-2">
+                        <label for="remember" class="text-gray-700">Remember me</label>
+                    </div>
+                    <a href="#" class="text-primary hover:text-primary/80 transition">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="w-full py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium">
+                    Login
+                </button>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <p class="text-gray-600">Don't have an account? <a href="#" class="text-primary hover:text-primary/80 transition">Sign up</a></p>
+            </div>
+            
+            <div id="loginMessage" class="mt-4 p-3 rounded text-center hidden"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-gray-400">
+                <p>&copy; 2023 AI Sources Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginMessage = document.getElementById('loginMessage');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // This is a simple frontend validation
+                // In a real application, you would send this to your backend
+                if (email && password) {
+                    // Show success message (for demo purposes)
+                    loginMessage.textContent = 'Login successful!';
+                    loginMessage.classList.remove('hidden', 'bg-red-100', 'text-red-800');
+                    loginMessage.classList.add('bg-green-100', 'text-green-800');
+                    
+                    // In a real application, you would redirect to the user dashboard
+                    // window.location.href = 'dashboard.html';
+                } else {
+                    // Show error message
+                    loginMessage.textContent = 'Please enter both email and password.';
+                    loginMessage.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+                    loginMessage.classList.add('bg-red-100', 'text-red-800');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
