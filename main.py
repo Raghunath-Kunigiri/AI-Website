@@ -4,28 +4,29 @@ from pydantic import BaseModel
 from pymongo import MongoClient
 from bson import ObjectId
 from typing import List, Optional
-from dotenv import load_dotenv
-load_dotenv()
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
-# Enable CORS to allow frontend to communicate with backend
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update with your frontend URL in production
+    allow_origins=["*"],  # Update with frontend URL after deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # MongoDB connection
-MONGO_URI = "mongodb+srv://harshithathota2000:ERuvTNydZF4E6Os7@clusterrk.fgfpg5w.mongodb.net/?retryWrites=true&w=majority&appName=ClusterRK"
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://harshithathota2000:ERuvTNydZF4E6Os7@clusterrk.fgfpg5w.mongodb.net/?retryWrites=true&w=majority&appName=ClusterRK")
 client = MongoClient(MONGO_URI)
 db = client["ai_sources_db"]
 collection = db["sources"]
 
-# Pydantic model for AI Source
+# Pydantic models
 class AISource(BaseModel):
     name: str
     category: str
@@ -49,7 +50,12 @@ def source_to_dict(source):
         "featured": source["featured"]
     }
 
-# API Endpoints
+# Root endpoint
+@app.get("/")
+async def root():
+    return {"message": "Welcome to AI Sources API. Visit /api/sources to view resources."}
+
+# Existing endpoints
 @app.get("/api/sources", response_model=List[AISourceInDB])
 async def get_sources():
     sources = collection.find()
