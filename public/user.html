@@ -202,50 +202,69 @@
         }
 
 
-        // Login Form Submission
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+        signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('signupEmail').value.trim();
+    const username = document.getElementById('signupUsername').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const contactDetails = document.getElementById('contactDetails').value.trim();
 
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(u => u.email === email && u.password === password);
+    if (!email.endsWith('@gmail.com')) {
+        signupError.textContent = 'Please enter a valid Gmail address.';
+        signupError.classList.remove('hidden');
+        return;
+    }
+    if (password !== confirmPassword) {
+        signupError.textContent = 'Passwords do not match.';
+        signupError.classList.remove('hidden');
+        return;
+    }
+    if (!/^\+?\d{10,15}$/.test(contactDetails.replace(/[-()\s]/g, ''))) {
+        signupError.textContent = 'Please enter a valid phone number.';
+        signupError.classList.remove('hidden');
+        return;
+    }
 
-            if (user) {
-                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                window.location.href = 'index.html';
-            } else {
-                loginError.textContent = 'Invalid email or password.';
-                loginError.classList.remove('hidden');
-            }
+    try {
+        const response = await fetch(`${API_URL}/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, username, password, contact_details: contactDetails, favorites: [] })
         });
+        if (!response.ok) throw new Error(await response.text());
+        signupSuccess.textContent = 'Account created successfully! Redirecting...';
+        signupSuccess.classList.remove('hidden');
+        setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+    } catch (error) {
+        signupError.textContent = error.message;
+        signupError.classList.remove('hidden');
+    }
+});
 
-        // Signup Form Submission
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
 
-            if (password !== confirmPassword) {
-                signupError.textContent = 'Passwords do not match.';
-                signupError.classList.remove('hidden');
-                return;
-            }
-
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            if (users.some(u => u.email === email)) {
-                signupError.textContent = 'Email already exists.';
-                signupError.classList.remove('hidden');
-                return;
-            }
-
-            const newUser = { email, password, favorites: [] };
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('loggedInUser', JSON.stringify(newUser));
-            window.location.href = 'index.html';
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
         });
+        if (!response.ok) throw new Error(await response.text());
+        const user = await response.json();
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        window.location.href = 'index.html';
+    } catch (error) {
+        loginError.textContent = error.message;
+        loginError.classList.remove('hidden');
+    }
+});
+        const API_URL = window.location.hostname.includes('localhost')
+    ? 'http://localhost:8000/api'
+    : 'https://aisources.onrender.com/api';
     </script>
 </body>
 </html>

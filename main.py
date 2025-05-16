@@ -14,7 +14,7 @@ app = FastAPI()
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update with frontend URL after deployment
+    allow_origins=["https://aisources-front.onrender.com"],  # Update with frontend URL after deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
