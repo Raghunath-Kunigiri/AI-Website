@@ -42,7 +42,7 @@
                 <div class="flex justify-center space-x-4">
                     <!-- Google Sign-In Button -->
                     <div id="g_id_onload"
-                         data-client_id="643330079708-i0s1jpoopr21deq4jinaht6bvqftdcs2.apps.googleusercontent.com"
+                         data-client_id="<%= process.env.GOOGLE_CLIENT_ID %>"
                          data-context="signin"
                          data-ux_mode="popup"
                          data-callback="handleGoogleSignIn"
@@ -125,6 +125,12 @@
     </footer>
 
     <script>
+
+        // Set the client ID dynamically
+  document.addEventListener('DOMContentLoaded', function() {
+    const gIdOnload = document.getElementById('g_id_onload');
+    gIdOnload.setAttribute('data-client_id', window.appConfig.googleClientId);
+  });
         // DOM Elements
         const loginTab = document.getElementById('loginTab');
         const signupTab = document.getElementById('signupTab');
